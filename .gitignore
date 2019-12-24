@@ -1,0 +1,55 @@
+# GitIgnore for Salesforce Projects
+# Project Settings and MetaData
+.project
+.settings/
+.metadata
+build.properties
+config
+
+# Apex Log as optional
+apex-scripts/log
+
+# Eclipse specific
+salesforce.schema
+Referenced Packages
+bin/
+tmp/
+config/
+*.tmp
+*.bak
+local.properties
+.settings
+.loadpath
+.classpath
+*.cache
+
+# Mavensmate
+*.sublime-project
+*.sublime-settings
+*.sublime-workspace
+mm.log
+
+# The Welkin Suite specific/.localHistory
+/resource-bundles
+/.cache
+/TestCache.xml
+/TestsResultsCache.xml
+/*.sfprojsettings
+/*.rmprops
+/*.credprops
+/*.sfproj
+/*.bak
+/Logs
+/ant
+/Soql
+/src/staticresources/TWS_Sync_Data.resource
+/TWS_Sync_Data.twssd
+/AnonymousApex
+*.7z
+
+# OSX-specific exclusions
+.[dD][sS]_[sS]tore
+
+.idea
+IlluminatedCloud
+*.iml
