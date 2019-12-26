@@ -27,10 +27,13 @@ node {
         stage('Deploye Code') {
             println jwt_key_file;
             println JWT_KEY_CRED_ID;
+            sfdx force:auth:logout --targetusername my-hub-org
             if (isUnix()) {
+                sh returnStatus: true, script: "${toolbelt} force:auth:logout --clientid --targetusername ${HUB_ORG}"
                 rc = sh returnStatus: true, script: "${toolbelt} force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile ${jwt_key_file} --setdefaultdevhubusername --instanceurl ${SFDC_HOST}"
             }else{
-                 rc = bat returnStatus: true, script: "\"${toolbelt}\" force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile \"${jwt_key_file}\" --setdefaultdevhubusername --instanceurl ${SFDC_HOST}"
+                bat returnStatus: true, script: "\"${toolbelt}\" force:auth:logout --clientid --targetusername ${HUB_ORG}"
+                rc = bat returnStatus: true, script: "\"${toolbelt}\" force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile \"${jwt_key_file}\" --setdefaultdevhubusername --instanceurl ${SFDC_HOST}"
             }
             if (rc != 0) { error 'hub org authorization failed' }
 
