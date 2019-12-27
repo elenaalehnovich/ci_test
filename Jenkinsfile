@@ -2,8 +2,9 @@
 import groovy.json.JsonSlurperClassic
 
 properties([
-        [$class: 'BuildDiscarderProperty',strategy: [$class: 'LogRotator', numToKeepStr: '10']],
-        pipelineTriggers([[$class: "SCMTrigger"]])
+        [$class: 'BuildDiscarderProperty',strategy: [$class: 'LogRotator', numToKeepStr: '10']]
+/*,
+        pipelineTriggers([[$class: "SCMTrigger"]])*/
 ])
 
 node {
