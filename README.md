@@ -34,3 +34,4 @@
         JWT_CRED_ID_DH:- The credentials ID for the private key file from Jenkins (server.key)
 6. Add Jenkins file to the root of the Git folder
 7. relay-windows-amd64.exe forward --bucket github-jenkins http://localhost:8080/github-webhook/
+https://webhookrelay.com/blog/2017/11/23/github-jenkins-guide/__
