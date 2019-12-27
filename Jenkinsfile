@@ -1,5 +1,5 @@
 #!groovy
-#for test
+
 import groovy.json.JsonSlurperClassic
 
 properties([
