@@ -33,7 +33,14 @@ node {
         stage('Deploye Code') {
             println jwt_key_file;
             println JWT_KEY_CRED_ID;
-
+            input {
+                // Displays message for input
+                message "Should we release service on Production?"
+                // Separate def. button text
+                ok "Banzai!"
+                // Allows define who able to submit user input block
+                println submitter
+            }
             if (isUnix()) {
                 sh returnStatus: true, script: "${toolbelt} force:auth:logout --targetusername ${HUB_ORG}"
                 rc = sh returnStatus: true, script: "${toolbelt} force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile ${jwt_key_file} --setdefaultdevhubusername --instanceurl ${SFDC_HOST}"
