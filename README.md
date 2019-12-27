@@ -32,4 +32,4 @@
         CONNECTED_APP_CONSUMER_KEY_DH :- The consumer key that was returned after you created a connected app in your Dev Hub org.
         JWT_CRED_ID_DH:- The credentials ID for the private key file from Jenkins (server.key)
 6. Add Jenkins file to the root of the Git folder
-7. 
+7. relay-windows-amd64.exe forward --bucket github-jenkins http://localhost:8080/github-webhook/
