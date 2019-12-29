@@ -12,7 +12,7 @@
     - Create a key file from the server.pass.key file : 
         openssl rsa -passin pass:x -in server.pass.key -out server.key
     - Request and generate the certificate :
-        openssl req -new -key server.key -out server.csr
+        openssl req -new -key server.key -out server.csr 
     - Generate the SSL certificate: 
         openssl x509 -req -sha256 -days 365 -in server.csr -signkey server.key -out server.crt
 3. Create Connected App for JWT-Based Flow in the Dev hub org
