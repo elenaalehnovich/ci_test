@@ -17,6 +17,8 @@ node {
     def props = readProperties file: 'orgs.properties'
     def toolbelt = tool 'toolbelt'
     println env.CHANGE_AUTHOR
+    println "CHANGE_BRANCH:" + env.CHANGE_BRANCH
+    println "CHANGE_AUTHOR_DISPLAY_NAME" + env.CHANGE_AUTHOR_DISPLAY_NAME
     println currentBuild.getBuildCauses()
     def isAutomaticProcessRun = currentBuild.getBuildCauses()[0].toString().contains('UserIdCause')
 
