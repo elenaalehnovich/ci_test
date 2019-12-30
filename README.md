@@ -23,7 +23,7 @@
 4. Setup Jenkins
    - Install Jenkins. https://jenkins.io/download/
    - Login to Jenkins (localhost:8080)
-   - Install Git + GitHub(BitBucket/GitLab whatever you use as source repo) + Custom Tool plugins in Jenkins
+   - Install Git + GitHub(BitBucket/GitLab whatever you use as source repo) + Custom Tool + Pipeline Utility Steps plugins in Jenkins
    - Configure the the Server.key from step 2 in the credential plugins.(Jenkins -> Credentials -> Add new -> Upload server.key as Secret File)
 5. Configure the Jenkins environment Variable
    - Set Environment variable:
