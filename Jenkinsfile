@@ -18,16 +18,12 @@ node {
     println env.CHANGE_AUTHOR
     println "CHANGE_BRANCH:" + env.CHANGE_BRANCH
     println "CHANGE_AUTHOR_DISPLAY_NAME" + env.CHANGE_AUTHOR_DISPLAY_NAME
-    println currentBuild.getBuildCauses()
-    def isAutomaticProcessRun = currentBuild.getBuildCauses()[0].toString().contains('UserIdCause')
+    def isAutomaticProcessRun = currentBuild.getBuildCauses()[0].toString().contains('TimerTrigger')
 
     println 'KEY IS'
     println JWT_KEY_CRED_ID
     println CONNECTED_APP_CONSUMER_KEY
     println props
-    println env.BRANCH_NAME
-    println currentBuild.rawBuild.getCauses()[0].toString().contains('UserIdCause');
-    println "buildnumber" + BUILD_NUMBER
 
     stage('checkout source') {
         checkout scm
