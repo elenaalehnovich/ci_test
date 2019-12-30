@@ -16,7 +16,7 @@ node {
     def SFDC_HOST = env.SFDC_HOST_DH
     def JWT_KEY_CRED_ID = 'b95b9f50-b05a-46b4-aafb-af449cff11c8'
     def CONNECTED_APP_CONSUMER_KEY=env.CONNECTED_APP_CONSUMER_KEY_DH
-    def props = readProperties  file: './orgs.properties'
+    def props = readProperties  file: 'orgs.properties'
 
     println 'KEY IS' 
     println JWT_KEY_CRED_ID
