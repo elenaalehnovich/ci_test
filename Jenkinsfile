@@ -16,6 +16,7 @@ node {
     def CONNECTED_APP_CONSUMER_KEY = env.CONNECTED_APP_CONSUMER_KEY_DH
     def props = readProperties file: 'orgs.properties'
     def toolbelt = tool 'toolbelt'
+    println env
     println currentBuild.getBuildCauses()
     def isAutomaticProcessRun = currentBuild.getBuildCauses()[0].toString().contains('UserIdCause')
 
