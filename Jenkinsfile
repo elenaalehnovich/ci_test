@@ -11,8 +11,7 @@ properties([
 node {
 
     def JWT_KEY_CRED_ID = 'b95b9f50-b05a-46b4-aafb-af449cff11c8'
-    def BUILD_NUMBER=env.BUILD_NUMBER
-    def RUN_ARTIFACT_DIR="tests/${BUILD_NUMBER}"
+    def RUN_ARTIFACT_DIR = "tests/${env.BUILD_NUMBER}"
     def CONNECTED_APP_CONSUMER_KEY = env.CONNECTED_APP_CONSUMER_KEY_DH
     def props = readProperties file: 'orgs.properties'
     def toolbelt = tool 'toolbelt'
@@ -40,7 +39,13 @@ node {
 
             }
             stage('Run Autotests') {
-
+                sh "mkdir -p ${RUN_ARTIFACT_DIR}"
+                timeout(time: 120, unit: 'SECONDS') {
+                    rc = sh returnStatus: true, script: "${toolbelt}/sfdx force:apex:test:run --testlevel RunLocalTests --outputdir ${RUN_ARTIFACT_DIR} --resultformat tap --targetusername ${props.dev_username}"
+                    if (rc != 0) {
+                        error 'apex test run failed'
+                    }
+                }
             }
         } else {
             stage('Deploy Code') {
