@@ -40,12 +40,12 @@ node {
             }
             stage('Run Autotests') {
                 sh "mkdir -p ${RUN_ARTIFACT_DIR}"
-                timeout(time: 120, unit: 'SECONDS') {
+                //timeout(time: 120, unit: 'SECONDS') {
                     rc = sh returnStatus: true, script: "${toolbelt}/sfdx force:apex:test:run --testlevel RunLocalTests --outputdir ${RUN_ARTIFACT_DIR} --resultformat tap --targetusername ${props.dev_username}"
                     if (rc != 0) {
                         error 'apex test run failed'
                     }
-                }
+                //}
             }
         } else {
             stage('Deploy Code') {
