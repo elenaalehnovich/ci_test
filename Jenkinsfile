@@ -11,7 +11,7 @@ properties([
 node {
 
     def JWT_KEY_CRED_ID = 'b95b9f50-b05a-46b4-aafb-af449cff11c8'
-    def RUN_ARTIFACT_DIR = "tests/${env.BUILD_NUMBER}"
+    def RUN_ARTIFACT_DIR = "tests"
     def CONNECTED_APP_CONSUMER_KEY = env.CONNECTED_APP_CONSUMER_KEY_DH
     def props = readProperties file: 'orgs.properties'
     def toolbelt = tool 'toolbelt'
