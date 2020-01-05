@@ -97,6 +97,13 @@ node {
             }
         }
 
+        post {
+            success {
+            }
+            failure {
+            }
+        }
+
 
     }
 }
