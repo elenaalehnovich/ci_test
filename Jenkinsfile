@@ -72,8 +72,8 @@ node {
                     sh returnStatus: true, script: mdapiConvertScript
                     rc = sh returnStdout: true, script: deployCodeScript
                 } else {
-                    bat returnStatus: true, script: authorizationScript;
-                    bat returnStatus: true, script: mdapiConvertScript
+                    rc = bat returnStatus: true, script: authorizationScript;
+                    rc = bat returnStatus: true, script: mdapiConvertScript
                     rc = bat returnStdout: true, script: deployCodeScript;
                 }
                 if (rc != 0) {
