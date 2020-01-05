@@ -3,6 +3,7 @@
 #
 
 package.xml
+force-app/package.xml-meta.xml
 **/jsconfig.json
 
 **/.eslintrc.json

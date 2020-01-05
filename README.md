@@ -24,7 +24,7 @@
    - Install Jenkins. https://jenkins.io/download/
    - Login to Jenkins (localhost:8080)
    - Install Git + GitHub(BitBucket/GitLab whatever you use as source repo) + Custom Tool + Pipeline Utility Steps 
-        + Warnings Next Generation plugins in Jenkins
+        + Warnings Next Generation + Git Parameter plugins in Jenkins
    - Configure the the Server.key from step 2 in the credential plugins.(Jenkins -> Credentials -> Add new -> Upload server.key as Secret File)
 5. Configure the Jenkins environment Variable
    - Set Environment variable:
@@ -36,4 +36,5 @@
 7. Update orgs.properties file with your own Orgs Username + instance
 7. relay-windows-amd64.exe forward --bucket github-jenkins http://localhost:8080/github-webhook/
 https://webhookrelay.com/blog/2017/11/23/github-jenkins-guide/__
+force ignore upd
 

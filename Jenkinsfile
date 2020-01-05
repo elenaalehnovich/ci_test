@@ -80,12 +80,15 @@ node {
         stage('Deploy Code') {
             if (!isAutomaticProcessRun && targetUserName != null) {
                 def authorizationScript = "\"${toolbelt}\" force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${props.prod_username} --jwtkeyfile ${jwt_key_file} --setdefaultdevhubusername --instanceurl ${props.prod_host}";
-                def deployCodeScript = "\"${toolbelt}\" force:mdapi:deploy -d force-app/main/default/. -u ${targetUserName}"
+                def mdapiConvertScript = "\"${toolbelt}\" force:source:convert -r ./force-app/ -d manifest";
+                def deployCodeScript = "\"${toolbelt}\" force:mdapi:deploy -d manifest/. -u ${targetUserName}";
                 if (isUnix()) {
-                    rc = sh returnStatus: true, script: authorizationScript;
+                    sh returnStatus: true, script: authorizationScript;
+                    sh returnStatus: true, script: mdapiConvertScript
                     rc = sh returnStdout: true, script: deployCodeScript
                 } else {
-                    rc = bat returnStatus: true, script: authorizationScript;
+                    bat returnStatus: true, script: authorizationScript;
+                    bat returnStatus: true, script: mdapiConvertScript
                     rc = bat returnStdout: true, script: deployCodeScript;
                 }
                 if (rc != 0) {
