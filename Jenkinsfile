@@ -68,6 +68,7 @@ node {
                     if (isUnix()) {
                         rc = sh returnStatus: true, script: testRunScript
                     } else {
+                        rd = 0
                        // rc = bat returnStatus: true, script: testRunScript
                     }
                     if (rc != 0) {
