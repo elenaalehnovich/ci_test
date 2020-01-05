@@ -3,6 +3,7 @@
 import groovy.json.JsonSlurperClassic
 
 properties([
+        [$class: 'GithubProjectProperty', projectUrlStr: 'https://github.com/elenaalehnovich/ci_test/'],
         [$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', numToKeepStr: '10']],
         pipelineTriggers([cron('H/2 * * * *')]),
         pipelineTriggers([githubPush()]),
