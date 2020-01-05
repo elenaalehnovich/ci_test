@@ -23,7 +23,8 @@
 4. Setup Jenkins
    - Install Jenkins. https://jenkins.io/download/
    - Login to Jenkins (localhost:8080)
-   - Install Git + GitHub(BitBucket/GitLab whatever you use as source repo) + Custom Tool + Pipeline Utility Steps plugins in Jenkins
+   - Install Git + GitHub(BitBucket/GitLab whatever you use as source repo) + Custom Tool + Pipeline Utility Steps 
+        + Warnings Next Generation plugins in Jenkins
    - Configure the the Server.key from step 2 in the credential plugins.(Jenkins -> Credentials -> Add new -> Upload server.key as Secret File)
 5. Configure the Jenkins environment Variable
    - Set Environment variable:
@@ -32,5 +33,7 @@
         CONNECTED_APP_CONSUMER_KEY_DH :- The consumer key that was returned after you created a connected app in your Dev Hub org.
         JWT_CRED_ID_DH:- The credentials ID for the private key file from Jenkins (server.key)
 6. Add Jenkins file to the root of the Git folder
+7. Update orgs.properties file with your own Orgs Username + instance
 7. relay-windows-amd64.exe forward --bucket github-jenkins http://localhost:8080/github-webhook/
 https://webhookrelay.com/blog/2017/11/23/github-jenkins-guide/__
+

@@ -15,9 +15,6 @@ node {
     def CONNECTED_APP_CONSUMER_KEY = env.CONNECTED_APP_CONSUMER_KEY_DH
     def props = readProperties file: 'orgs.properties'
     def toolbelt = tool 'toolbelt'
-    println env.CHANGE_AUTHOR
-    println "CHANGE_BRANCH:" + env.CHANGE_BRANCH
-    println "CHANGE_AUTHOR_DISPLAY_NAME" + env.CHANGE_AUTHOR_DISPLAY_NAME
     def isAutomaticProcessRun = currentBuild.getBuildCauses()[0].toString().contains('TimerTrigger')
 
     println 'KEY IS'
@@ -37,18 +34,24 @@ node {
             stage('Run Autotests') {
                 bat "IF NOT exist ${RUN_ARTIFACT_DIR} ( mkdir ${RUN_ARTIFACT_DIR})"
                 //timeout(time: 120, unit: 'SECONDS') {
+                if (isUnix()) {
+                    rc = sh returnStatus: true, script: "\"${toolbelt}\" force:apex:test:run --testlevel RunLocalTests --outputdir ${RUN_ARTIFACT_DIR} --resultformat tap --targetusername ${props.dev_username}"
+                } else {
                     rc = bat returnStatus: true, script: "\"${toolbelt}\" force:apex:test:run --testlevel RunLocalTests --outputdir ${RUN_ARTIFACT_DIR} --resultformat tap --targetusername ${props.dev_username}"
+                }
                     if (rc != 0) {
-                        error 'apex test run failed'
+                        error 'Apex test run failed'
                     }
                 //}
             }
         } else {
             stage('Deploy Code') {
+                def command = returnStatus: true, script: "${toolbelt} force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${props.prod_username} --jwtkeyfile ${jwt_key_file} --setdefaultdevhubusername --instanceurl ${props.prod_host}";
                 if (isUnix()) {
-                    rc = sh returnStatus: true, script: "${toolbelt} force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${props.dev_username} --jwtkeyfile ${jwt_key_file} --setdefaultdevhubusername --instanceurl ${props.dev_host}"
+                    rc = sh returnStatus: true, script: "${toolbelt} force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${props.prod_username} --jwtkeyfile ${jwt_key_file} --setdefaultdevhubusername --instanceurl ${props.prod_host}"
                 } else {
-                    rc = bat returnStatus: true, script: "\"${toolbelt}\" force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${props.dev_username} --jwtkeyfile \"${jwt_key_file}\" --setdefaultdevhubusername --instanceurl ${props.dev_host}"
+                    rc = bat command;
+                    //rc = bat returnStatus: true, script: "\"${toolbelt}\" force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${props.prod_username} --jwtkeyfile \"${jwt_key_file}\" --setdefaultdevhubusername --instanceurl ${props.prod_host}"
                 }
                 if (rc != 0) {
                     error 'hub org authorization failed'
