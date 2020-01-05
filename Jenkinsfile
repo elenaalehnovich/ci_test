@@ -3,7 +3,6 @@
 import groovy.json.JsonSlurperClassic
 
 properties([
-        [$class: 'GithubProjectProperty', projectUrlStr: 'https://github.com/elenaalehnovich/ci_test/'],
         [$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', numToKeepStr: '10']],
         pipelineTriggers([cron('H/2 * * * *')]),
         pipelineTriggers([githubPush()])/*,
@@ -21,10 +20,6 @@ node {
     def isAutomaticProcessRun = currentBuild.getBuildCauses()[0].toString().contains('TimerTrigger')
     def targetUserName
     def sfInstance
-    println 'KEY IS'
-    println JWT_KEY_CRED_ID
-    println CONNECTED_APP_CONSUMER_KEY
-    println props
 
     stage('checkout source') {
         checkout scm
@@ -32,15 +27,13 @@ node {
 
     withCredentials([file(credentialsId: JWT_KEY_CRED_ID, variable: 'jwt_key_file')]) {
         stage('Set Org Properties') {
+            println env.BRANCH_NAME
             if (env.BRANCH_NAME == props.branch_dev) {
                 targetUserName = props.dev_username
-                sfInstance = props.dev_host
             } else if (env.BRANCH_NAME == props.branch_uat) {
                 targetUserName = props.uat_username
-                sfInstance = props.uat_host
             } else if (env.BRANCH_NAME == props.branch_prod) {
                 targetUserName = props.prod_username
-                sfInstance = props.prod_host
             }
         }
 
@@ -70,7 +63,7 @@ node {
 
         stage('Deploy Code') {
             if (!isAutomaticProcessRun && targetUserName != null) {
-                def authorizationScript = "\"${toolbelt}\" force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${props.prod_username} --jwtkeyfile ${jwt_key_file} --setdefaultdevhubusername --instanceurl ${props.prod_host}";
+                def authorizationScript = "\"${toolbelt}\" force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${props.prod_username} --jwtkeyfile ${jwt_key_file} --setdefaultdevhubusername --instanceurl https://login.salesforce.com";
                 def mdapiConvertScript = "\"${toolbelt}\" force:source:convert -r ./force-app/ -d manifest";
                 def deployCodeScript = "\"${toolbelt}\" force:mdapi:deploy -d manifest/. -u ${targetUserName}";
                 if (isUnix()) {
