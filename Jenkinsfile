@@ -10,11 +10,9 @@ properties([
 
 node {
 
-    environment {
-        JWT_KEY_CRED_ID = 'b95b9f50-b05a-46b4-aafb-af449cff11c8'
-        RUN_ARTIFACT_DIR = "tests"
-        CONNECTED_APP_CONSUMER_KEY = env.CONNECTED_APP_CONSUMER_KEY_DH
-    }
+    def JWT_KEY_CRED_ID = 'b95b9f50-b05a-46b4-aafb-af449cff11c8'
+    def RUN_ARTIFACT_DIR = "tests"
+    def CONNECTED_APP_CONSUMER_KEY = env.CONNECTED_APP_CONSUMER_KEY_DH
 
     def props = readProperties file: 'orgs.properties'
     def toolbelt = tool 'toolbelt'
@@ -31,7 +29,7 @@ node {
     withCredentials([file(credentialsId: JWT_KEY_CRED_ID, variable: 'jwt_key_file')]) {
         stage('Code Scanner Run') {
             when {
-                expression{
+                expression {
                     return isAutomaticProcessRun;
                 }
             }
@@ -51,9 +49,9 @@ node {
                 } else {
                     rc = bat returnStatus: true, script: "\"${toolbelt}\" force:apex:test:run --testlevel RunLocalTests --outputdir ${RUN_ARTIFACT_DIR} --resultformat tap --targetusername ${props.dev_username}"
                 }
-                    if (rc != 0) {
-                        error 'Apex test run failed'
-                    }
+                if (rc != 0) {
+                    error 'Apex test run failed'
+                }
                 //}
             }
         } else {
