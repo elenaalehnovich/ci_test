@@ -5,7 +5,19 @@ import groovy.json.JsonSlurperClassic
 properties([
         [$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', numToKeepStr: '10']],
         pipelineTriggers([cron('H/2 * * * *')]),
-        pipelineTriggers([githubPush()])
+        pipelineTriggers([githubPush()]),
+        parameters([
+                gitParameter(branch: '',
+                        branchFilter: '(master|uat))',
+                        defaultValue: 'master',
+                        description: '',
+                        name: 'BRANCH',
+                        quickFilterEnabled: false,
+                        selectedValue: 'NONE',
+                        sortMode: 'NONE',
+                        tagFilter: '*',
+                        type: 'PT_BRANCH')
+        ])
 ])
 
 node {
@@ -50,7 +62,7 @@ node {
 
         stage("Run Autotests") {
             if ((isAutomaticProcessRun || env.BRANCH_NAME == "master") && targetUserName != null) {
-                dev testRunScript = "\"${toolbelt}\" force:apex:test:run --testlevel RunLocalTests --outputdir ${RUN_ARTIFACT_DIR} --resultformat tap --targetusername ${targetUserName}"
+                def testRunScript = "\"${toolbelt}\" force:apex:test:run --testlevel RunLocalTests --outputdir ${RUN_ARTIFACT_DIR} --resultformat tap --targetusername ${targetUserName}"
                 bat "IF NOT exist ${RUN_ARTIFACT_DIR} (mkdir ${RUN_ARTIFACT_DIR})"
                 timeout(time: 120, unit: 'SECONDS') {
                     if (isUnix()) {
@@ -66,7 +78,7 @@ node {
         }
 
         stage('Deploy Code') {
-            if(!isAutomaticProcessRun && targetUserName != null) {
+            if (!isAutomaticProcessRun && targetUserName != null) {
                 def authorizationScript = "\"${toolbelt}\" force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${props.prod_username} --jwtkeyfile ${jwt_key_file} --setdefaultdevhubusername --instanceurl ${props.prod_host}";
                 def deployCodeScript = "\"${toolbelt}\" force:mdapi:deploy -d force-app/main/default/. -u ${targetUserName}"
                 if (isUnix()) {
@@ -74,7 +86,7 @@ node {
                     rc = sh returnStdout: true, script: deployCodeScript
                 } else {
                     rc = bat returnStatus: true, script: authorizationScript;
-                    rc =  bat returnStdout: true, script: deployCodeScript;
+                    rc = bat returnStdout: true, script: deployCodeScript;
                 }
                 if (rc != 0) {
                     error 'Deploy Code Failed'
