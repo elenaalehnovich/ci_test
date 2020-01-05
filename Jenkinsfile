@@ -30,15 +30,15 @@ node {
 
     withCredentials([file(credentialsId: JWT_KEY_CRED_ID, variable: 'jwt_key_file')]) {
         stage('Set Org Properties') {
-            if (env.BRANCH_NAME == ${props.branch_dev }) {
-                targetUserName = ${props.dev_username }
-                sfInstance = ${props.dev_host }
-            } else if (env.BRANCH_NAME == ${props.branch_uat }) {
-                targetUserName = ${props.uat_username }
-                sfInstance = ${props.uat_host }
-            } else if (env.BRANCH_NAME == ${props.branch_prod }) {
-                targetUserName = ${props.prod_username }
-                sfInstance = ${props.prod_host }
+            if (env.BRANCH_NAME == props.branch_dev) {
+                targetUserName = props.dev_username
+                sfInstance = props.dev_host
+            } else if (env.BRANCH_NAME == props.branch_uat) {
+                targetUserName = props.uat_username
+                sfInstance = props.uat_host
+            } else if (env.BRANCH_NAME == props.branch_prod) {
+                targetUserName = props.prod_username
+                sfInstance = props.prod_host
             }
         }
 
