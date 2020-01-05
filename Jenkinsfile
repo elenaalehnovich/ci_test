@@ -6,8 +6,8 @@ properties([
         [$class: 'GithubProjectProperty', projectUrlStr: 'https://github.com/elenaalehnovich/ci_test/'],
         [$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', numToKeepStr: '10']],
         pipelineTriggers([cron('H/2 * * * *')]),
-        pipelineTriggers([githubPush()]),
-        pipelineTriggers([$class: 'CodingPushTrigger', branchFilterType: 'RegexBasedFilter', targetBranchRegex: '(uat|develop)'])
+        pipelineTriggers([githubPush()])/*,
+        pipelineTriggers([$class: 'CodingPushTrigger', branchFilterType: 'RegexBasedFilter', targetBranchRegex: '(uat|develop)'])*/
 ])
 
 node {
