@@ -44,6 +44,7 @@ node {
         }
 
         stage("Run Autotests") {
+            println targetUserName
             if ((isAutomaticProcessRun || env.BRANCH_NAME == "master") && targetUserName != null) {
                 def testRunScript = "\"${toolbelt}\" force:apex:test:run --testlevel RunLocalTests --outputdir ${RUN_ARTIFACT_DIR} --resultformat tap --targetusername ${targetUserName}"
                 bat "IF NOT exist ${RUN_ARTIFACT_DIR} (mkdir ${RUN_ARTIFACT_DIR})"
