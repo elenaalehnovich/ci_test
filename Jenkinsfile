@@ -46,13 +46,14 @@ node {
             }
         } else {
             stage('Deploy Code') {
-                def command = "\"${toolbelt}\" force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${props.prod_username} --jwtkeyfile ${jwt_key_file} --setdefaultdevhubusername --instanceurl ${props.prod_host}";
-                if (isUnix()) {
+                def jwtGrantScript = "\"${toolbelt}\" force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${props.prod_username} --jwtkeyfile ${jwt_key_file} --setdefaultdevhubusername --instanceurl ${props.prod_host}";
+                rc = isUnix() ? (sh returnStatus: true, script: jwtGrantScript) : (bat returnStatus: true, script: jwtGrantScript);
+                /*if (isUnix()) {
                     rc = sh returnStatus: true, script: "${toolbelt} force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${props.prod_username} --jwtkeyfile ${jwt_key_file} --setdefaultdevhubusername --instanceurl ${props.prod_host}"
                 } else {
                     rc = bat returnStatus: true, script: command;
                     //rc = bat returnStatus: true, script: "\"${toolbelt}\" force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${props.prod_username} --jwtkeyfile \"${jwt_key_file}\" --setdefaultdevhubusername --instanceurl ${props.prod_host}"
-                }
+                }*/
                 if (rc != 0) {
                     error 'hub org authorization failed'
                 }
