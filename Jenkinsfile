@@ -10,13 +10,15 @@ properties([
 
 node {
 
-    def JWT_KEY_CRED_ID = 'b95b9f50-b05a-46b4-aafb-af449cff11c8'
-    def RUN_ARTIFACT_DIR = "tests"
-    def CONNECTED_APP_CONSUMER_KEY = env.CONNECTED_APP_CONSUMER_KEY_DH
+    environment {
+        JWT_KEY_CRED_ID = 'b95b9f50-b05a-46b4-aafb-af449cff11c8'
+        RUN_ARTIFACT_DIR = "tests"
+        CONNECTED_APP_CONSUMER_KEY = env.CONNECTED_APP_CONSUMER_KEY_DH
+    }
+
     def props = readProperties file: 'orgs.properties'
     def toolbelt = tool 'toolbelt'
     def isAutomaticProcessRun = currentBuild.getBuildCauses()[0].toString().contains('TimerTrigger')
-
     println 'KEY IS'
     println JWT_KEY_CRED_ID
     println CONNECTED_APP_CONSUMER_KEY
@@ -27,6 +29,16 @@ node {
     }
 
     withCredentials([file(credentialsId: JWT_KEY_CRED_ID, variable: 'jwt_key_file')]) {
+        stage('Code Scanner Run') {
+            when {
+                expression{
+                    return isAutomaticProcessRun;
+                }
+            }
+            steps {
+                echo 'Automatic Scanner'
+            }
+        }
         if (isAutomaticProcessRun) {
             stage('PMD Code Scan') {
 
@@ -47,20 +59,15 @@ node {
         } else {
             stage('Deploy Code') {
                 def jwtGrantScript = "\"${toolbelt}\" force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${props.prod_username} --jwtkeyfile ${jwt_key_file} --setdefaultdevhubusername --instanceurl ${props.prod_host}";
-                rc = isUnix() ? (sh returnStatus: true, script: jwtGrantScript) : (bat returnStatus: true, script: jwtGrantScript);
-                /*if (isUnix()) {
-                    rc = sh returnStatus: true, script: "${toolbelt} force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${props.prod_username} --jwtkeyfile ${jwt_key_file} --setdefaultdevhubusername --instanceurl ${props.prod_host}"
+                if (isUnix()) {
+                    rc = sh returnStatus: true, script: jwtGrantScript;
                 } else {
-                    rc = bat returnStatus: true, script: command;
-                    //rc = bat returnStatus: true, script: "\"${toolbelt}\" force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${props.prod_username} --jwtkeyfile \"${jwt_key_file}\" --setdefaultdevhubusername --instanceurl ${props.prod_host}"
-                }*/
+                    rc = bat returnStatus: true, script: jwtGrantScript;
+                }
                 if (rc != 0) {
-                    error 'hub org authorization failed'
+                    error 'Hub org authorization failed'
                 }
 
-                println rc
-
-                // need to pull out assigned username
                 if (isUnix()) {
                     rmsg = sh returnStdout: true, script: "${toolbelt} force:mdapi:deploy -d force-app/main/default/. -u ${props.dev_username}"
                 } else {
