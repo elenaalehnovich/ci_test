@@ -22,7 +22,7 @@ properties([
 
 node {
 
-    def JWT_KEY_CRED_ID = 'a2a0f001-2003-4505-ab02-04c541486d22'
+    def JWT_KEY_CRED_ID = 'a42e7e08-1c5a-4d1f-85d3-438b0e2d7655'
     def RUN_ARTIFACT_DIR = "tests"
     def CONNECTED_APP_CONSUMER_KEY = env.CONNECTED_APP_CONSUMER_KEY_DH
 
