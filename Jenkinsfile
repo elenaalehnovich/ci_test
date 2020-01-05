@@ -4,20 +4,9 @@ import groovy.json.JsonSlurperClassic
 
 properties([
         [$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', numToKeepStr: '10']],
+        [$class: 'CodingPushTrigger', branchFilterType: 'RegexBasedFilter', targetBranchRegex: '(uat|develop)'],
         pipelineTriggers([cron('H/2 * * * *')]),
-        pipelineTriggers([githubPush()]),
-        parameters([
-                gitParameter(branch: '',
-                        branchFilter: '(master|uat))',
-                        defaultValue: 'master',
-                        description: '',
-                        name: 'BRANCH',
-                        quickFilterEnabled: false,
-                        selectedValue: 'NONE',
-                        sortMode: 'NONE',
-                        tagFilter: '*',
-                        type: 'PT_BRANCH')
-        ])
+        pipelineTriggers([githubPush()])
 ])
 
 node {
