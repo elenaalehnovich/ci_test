@@ -26,7 +26,7 @@ node {
     def toolbelt = tool 'toolbelt'
     def isAutomaticProcessRun = currentBuild.getBuildCauses()[0].toString().contains('TimerTrigger')
     def targetUserName
-    def sfInstance
+    def slackChannel = '#ci'
 
     stage('checkout source') {
         checkout scm
@@ -56,7 +56,6 @@ node {
                 if ((isAutomaticProcessRun || env.BRANCH_NAME == "master") && targetUserName != null) {
                     def testRunScript = "\"${toolbelt}\" force:apex:test:run --testlevel RunLocalTests --outputdir ${RUN_ARTIFACT_DIR} --resultformat tap --targetusername ${targetUserName}"
                     bat "IF NOT exist ${RUN_ARTIFACT_DIR} (mkdir ${RUN_ARTIFACT_DIR})"
-                    //timeout(time: 120, unit: 'SECONDS') {
                     if (isUnix()) {
                         rc = sh returnStatus: true, script: testRunScript
                     } else {
@@ -89,8 +88,8 @@ node {
             }
         }
     } catch (e) {
-
+        slackSend(channel: slackChannel, color: 'danger', message: "Huh, not good... Build failed : ${env.JOB_NAME} [${env.BUILD_NUMBER}] ${e} (<${env.RUN_DISPLAY_URL}|Open>) :man-shrugging::shrug:")
     } finally {
-        slackSend(channel: '#ci', color: 'good', message: "Build finished successfully : ${env.JOB_NAME} [${env.BUILD_NUMBER}] (<${env.RUN_DISPLAY_URL}|Open>) :thumbsup:")
+        slackSend(channel: slackChannel, color: 'good', message: "Build finished successfully : ${env.JOB_NAME} [${env.BUILD_NUMBER}] (<${env.RUN_DISPLAY_URL}|Open>) :thumbsup:")
     }
 }

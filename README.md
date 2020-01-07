@@ -35,6 +35,7 @@
 6. Add Jenkins file to the root of the Git folder
 7. Update orgs.properties file with your own Orgs Username + instance
 8. Configure Slack integration
+    - Update channel name variable (def slackChannel) in Jenkinsfile with your Slack Channel name
     - Follow the instructions using: https://my.slack.com/services/new/jenkins-ci
     
 7. relay-windows-amd64.exe forward --bucket github-jenkins http://localhost:8080/github-webhook/
