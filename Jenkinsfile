@@ -5,10 +5,11 @@ import groovy.json.JsonSlurperClassic
 properties([
         buildDiscarder(
                 logRotator(
-                        artifactDaysToKeepStr: '',
-                        artifactNumToKeepStr: '',
-                        daysToKeepStr: '',
-                        numToKeepStr: '10')
+                        daysToKeepStr: '-1',
+                        numToKeepStr: '7',
+                        artifactDaysToKeepStr: '14',
+                        artifactNumToKeepStr: '3'
+                )
         ),
         disableConcurrentBuilds(),
         pipelineTriggers([cron('H/2 * * * *')]),
