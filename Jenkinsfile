@@ -3,8 +3,14 @@
 import groovy.json.JsonSlurperClassic
 
 properties([
-        [$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', numToKeepStr: '10']],
-        [disableConcurrentBuilds()],
+        buildDiscarder(
+                logRotator(
+                        artifactDaysToKeepStr: '',
+                        artifactNumToKeepStr: '',
+                        daysToKeepStr: '',
+                        numToKeepStr: '10')
+        ),
+        disableConcurrentBuilds(),
         pipelineTriggers([cron('H/2 * * * *')]),
         pipelineTriggers([githubPush()])/*,
         pipelineTriggers([$class: 'CodingPushTrigger', branchFilterType: 'RegexBasedFilter', targetBranchRegex: '(uat|develop)'])*/
