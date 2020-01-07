@@ -24,7 +24,7 @@
    - Install Jenkins. https://jenkins.io/download/
    - Login to Jenkins (localhost:8080)
    - Install Git + GitHub(BitBucket/GitLab whatever you use as source repo) + Custom Tool + Pipeline Utility Steps 
-        + Warnings Next Generation + Git Parameter plugins in Jenkins
+        + Warnings Next Generation + Slack Notification plugins in Jenkins
    - Configure the the Server.key from step 2 in the credential plugins.(Jenkins -> Credentials -> Add new -> Upload server.key as Secret File)
 5. Configure the Jenkins environment Variable
    - Set Environment variable:
@@ -34,6 +34,9 @@
         JWT_CRED_ID_DH:- The credentials ID for the private key file from Jenkins (server.key)
 6. Add Jenkins file to the root of the Git folder
 7. Update orgs.properties file with your own Orgs Username + instance
+8. Configure Slack integration
+    - Follow the instructions using: https://my.slack.com/services/new/jenkins-ci
+    
 7. relay-windows-amd64.exe forward --bucket github-jenkins http://localhost:8080/github-webhook/
 https://webhookrelay.com/blog/2017/11/23/github-jenkins-guide/__
 force ignore upd
