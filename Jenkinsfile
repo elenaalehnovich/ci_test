@@ -38,6 +38,8 @@ node {
         withCredentials([file(credentialsId: JWT_KEY_CRED_ID, variable: 'jwt_key_file')]) {
             stage('Set Org Properties') {
                 println env.BRANCH_NAME
+                println props.branch_prod
+                println env.BRANCH_NAME == props.branch_prod
                 if (env.BRANCH_NAME == props.branch_dev) {
                     targetUserName = props.dev_username
                     instance = props.dev_host
