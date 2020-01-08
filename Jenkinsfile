@@ -28,7 +28,7 @@ node {
     def toolbelt = tool 'toolbelt'
     def isAutomaticProcessRun = currentBuild.getBuildCauses()[0].toString().contains('TimerTrigger')
     def targetUserName
-    def instance
+    def orgHost
 
     stage('checkout source') {
         checkout scm
@@ -42,13 +42,13 @@ node {
                 println env.BRANCH_NAME == props.branch_prod
                 if (env.BRANCH_NAME == props.branch_dev) {
                     targetUserName = props.dev_username
-                    instance = props.dev_host
+                    orgHost = props.dev_host
                 } else if (env.BRANCH_NAME == props.branch_uat) {
                     targetUserName = props.uat_username
-                    instance = props.uat_host
+                    orgHost = props.uat_host
                 } else if (env.BRANCH_NAME == props.branch_prod) {
                     targetUserName = props.prod_username
-                    isntance = props.prod_host
+                    orgHost = props.prod_host
                 }
             }
 
@@ -60,7 +60,7 @@ node {
 
             stage('Authorization') {
                 if(targetUserName != null) {
-                    def authorizationScript = "\"${toolbelt}\" force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${targetUserName} --jwtkeyfile ${jwt_key_file} --instanceurl ${instance}}";
+                    def authorizationScript = "\"${toolbelt}\" force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${targetUserName} --jwtkeyfile ${jwt_key_file} --instanceurl ${orgHost}";
                     if (isUnix()) {
                         rc = sh returnStatus: true, script: authorizationScript;
                     } else {
