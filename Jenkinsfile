@@ -12,7 +12,7 @@ properties([
                 )
         ),
         disableConcurrentBuilds(),
-        pipelineTriggers([cron('H/1 * * * *')]),
+        pipelineTriggers([cron('H */12 * * *')]),
         pipelineTriggers([githubPush()])/*,
         pipelineTriggers([$class: 'CodingPushTrigger', branchFilterType: 'RegexBasedFilter', targetBranchRegex: '(uat|develop)'])*/
 ])
