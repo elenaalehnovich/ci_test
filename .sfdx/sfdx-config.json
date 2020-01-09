@@ -1,3 +1,4 @@
 {
-    "defaultusername": "MyDev"
+    "defaultusername": "MyDev",
+    "defaultdevhubusername": "ci.test@instamotion.com"
 }
