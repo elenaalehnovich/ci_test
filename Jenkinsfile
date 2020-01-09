@@ -15,7 +15,6 @@ properties([
                         quickFilterEnabled: false,
                         selectedValue: 'NONE',
                         sortMode: 'NONE',
-                        tagFilter: '*',
                         type: 'PT_BRANCH')
         ])
 ])
