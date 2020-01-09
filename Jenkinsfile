@@ -14,12 +14,12 @@ properties([
         disableConcurrentBuilds(),
         pipelineTriggers([cron('H */12 * * *')]),
         pipelineTriggers([githubPush()]),
-        pipelineTriggers([githubBranches(
+        /*pipelineTriggers([githubBranches(
                 restriction (
                         matchAsPattern: true,
-                        matchCriteriaStr: 'uat|develop'))])
-        /*
-        ,pipelineTriggers([$class: 'CodingPushTrigger', branchFilterType: 'RegexBasedFilter', targetBranchRegex: '(uat|develop)'])*/
+                        matchCriteriaStr: 'uat|develop'))])*/
+
+        pipelineTriggers([$class: 'CodingPushTrigger', branchFilterType: 'RegexBasedFilter', targetBranchRegex: '(uat|develop)'])
 ])
 
 node {
