@@ -19,7 +19,9 @@ properties([
                         matchAsPattern: true,
                         matchCriteriaStr: 'uat|develop'))])*/
 
-        pipelineTriggers([$class: 'CodingPushTrigger', branchFilterType: 'RegexBasedFilter', targetBranchRegex: '(uat|develop)'])
+        pipelineTriggers([
+                [$class: 'CodingPushTrigger', branchFilterType: 'RegexBasedFilter', targetBranchRegex: '(uat|develop)']
+        ])
 ])
 
 node {
