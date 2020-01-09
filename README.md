@@ -21,7 +21,7 @@
     'Access and manage your data' 
    - Use digital signatures To upload your server.crt file.
    - Edit policy and select "Admin approved users are pre-authorized" to avoid "Not approved for access in salesforce" issue. 
-   - Assign Connected App to user or System Admin profile.
+   - Assign Connected App to user or System Admin prof ile.
 4. Setup Jenkins
    - Install Jenkins. https://jenkins.io/download/
    - Login to Jenkins (by default for local runner server: localhost:8080)
