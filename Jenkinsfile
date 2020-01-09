@@ -2,6 +2,8 @@
 
 import groovy.json.JsonSlurperClassic
 
+#!test
+
 properties([
         buildDiscarder(
                 logRotator(
@@ -19,9 +21,9 @@ properties([
                         matchAsPattern: true,
                         matchCriteriaStr: 'uat|develop'))])*/
 
-        pipelineTriggers([
+        /*pipelineTriggers([
                 [$class: 'CodingPushTrigger', branchFilterType: 'RegexBasedFilter', targetBranchRegex: '(uat|develop)']
-        ])
+        ])*/
 ])
 
 node {
