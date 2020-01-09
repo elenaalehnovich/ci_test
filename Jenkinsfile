@@ -2,8 +2,6 @@
 
 import groovy.json.JsonSlurperClassic
 
-#!test
-
 properties([
         buildDiscarder(
                 logRotator(
