@@ -25,16 +25,18 @@ properties([
 ])
 
 node {
+
+
     def props = readProperties file: 'config.properties'
 
     def JWT_KEY_CRED_ID = '0205c40f-b192-4137-b05f-28c48820e46d'
     def RUN_ARTIFACT_DIR = props.tests_dir == null ? 'tests' : props.tests_dir
+    def CONNECTED_APP_CONSUMER_KEY = env.CONNECTED_APP_CONSUMER_KEY_DH
 
     def toolbelt = tool 'toolbelt'
-    def timer_run = currentBuild.getBuildCauses()[0].toString().contains('TimerTrigger')
-    def sf_username
-    def sf_host
-    def consumer_key
+    def isAutomaticProcessRun = currentBuild.getBuildCauses()[0].toString().contains('TimerTrigger')
+    def targetUserName
+    def orgHost
 
     stage('checkout source') {
         checkout scm
@@ -47,33 +49,30 @@ node {
                 println props.branch_prod
                 println env.BRANCH_NAME == props.branch_prod
                 if (env.BRANCH_NAME == props.branch_dev) {
-                    sf_username = props.dev_username
-                    sf_host = props.dev_host
-                    consumer_key = env.CONNECTED_APP_CONSUMER_KEY_DEV
+                    targetUserName = props.dev_username
+                    orgHost = props.dev_host
                 } else if (env.BRANCH_NAME == props.branch_uat) {
-                    sf_username = props.uat_username
-                    sf_host = props.uat_host
-                    consumer_key = env.CONNECTED_APP_CONSUMER_KEY_UAT
+                    targetUserName = props.uat_username
+                    orgHost = props.uat_host
                 } else if (env.BRANCH_NAME == props.branch_prod) {
-                    sf_username = props.prod_username
-                    sf_host = props.prod_host
-                    consumer_key = env.CONNECTED_APP_CONSUMER_KEY_PROD
+                    targetUserName = props.prod_username
+                    orgHost = props.prod_host
                 }
             }
 
             stage('Code Scanner Run') {
-                if (timer_run) {
+                if (isAutomaticProcessRun) {
                     echo 'Automatic Scanner'
                 }
             }
 
             stage('Authorization') {
-                if(sf_username != null) {
-                    def auth_script = "\"${toolbelt}\" force:auth:jwt:grant --clientid ${consumer_key} --username ${sf_username} --jwtkeyfile ${jwt_key_file} --instanceurl ${sf_host}";
+                if(targetUserName != null) {
+                    def authorizationScript = "\"${toolbelt}\" force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${targetUserName} --jwtkeyfile ${jwt_key_file} --instanceurl ${orgHost}";
                     if (isUnix()) {
-                        rc = sh returnStatus: true, script: auth_script;
+                        rc = sh returnStatus: true, script: authorizationScript;
                     } else {
-                        rc = bat returnStatus: true, script: auth_script;
+                        rc = bat returnStatus: true, script: authorizationScript;
                     }
                     if (rc != 0) {
                         error 'Authorization failed'
@@ -82,14 +81,14 @@ node {
             }
 
             stage("Run Autotests") {
-                println sf_username
-                if ((timer_run || env.BRANCH_NAME == "master") && sf_username != null) {
-                    def test_script = "\"${toolbelt}\" force:apex:test:run --testlevel RunLocalTests --outputdir ${RUN_ARTIFACT_DIR} --resultformat tap --targetUsername ${sf_username}"
+                println targetUserName
+                if ((isAutomaticProcessRun || env.BRANCH_NAME == "master") && targetUserName != null) {
+                    def testRunScript = "\"${toolbelt}\" force:apex:test:run --testlevel RunLocalTests --outputdir ${RUN_ARTIFACT_DIR} --resultformat tap --targetusername ${targetUserName}"
                     bat "IF NOT exist ${RUN_ARTIFACT_DIR} (mkdir ${RUN_ARTIFACT_DIR})"
                     if (isUnix()) {
-                        rc = sh returnStatus: true, script: test_script
+                        rc = sh returnStatus: true, script: testRunScript
                     } else {
-                        rc = bat returnStatus: true, script: test_script
+                        rc = bat returnStatus: true, script: testRunScript
                     }
                     if (rc != 0) {
                         error 'Apex test run failed'
@@ -98,15 +97,15 @@ node {
             }
 
             stage('Deploy Code') {
-                if (!timer_run && sf_username != null) {
-                   // def mdapi_convert_script = "\"${toolbelt}\" force:source:convert -r ./force-app/ -d manifest";
-                    def deploy_script = "\"${toolbelt}\" force:source:deploy -d force-app. -u ${sf_username}";
+                if (!isAutomaticProcessRun && targetUserName != null) {
+                    def mdapiConvertScript = "\"${toolbelt}\" force:source:convert -r ./force-app/ -d manifest";
+                    def deployCodeScript = "\"${toolbelt}\" force:mdapi:deploy -d manifest/. -u ${targetUserName}";
                     if (isUnix()) {
-                        sh returnStatus: true, script: mdapi_convert_script
-                        rc = sh returnStdout: true, script: deploy_script
+                        sh returnStatus: true, script: mdapiConvertScript
+                        rc = sh returnStdout: true, script: deployCodeScript
                     } else {
-                        bat returnStatus: true, script: mdapi_convert_script
-                        rc = bat returnStdout: true, script: deploy_script;
+                        bat returnStatus: true, script: mdapiConvertScript
+                        rc = bat returnStdout: true, script: deployCodeScript;
                     }
                     if (rc != 0) {
                         error 'Deploy Code Failed'

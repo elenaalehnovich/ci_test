@@ -17,7 +17,7 @@
 3. Create Connected App for JWT-Based Flow in the Dev hub org
    - Created Connected App
    - Callback URL: http://localhost:1717/OauthRedirect
-   - Choose permissions: 'Perform requests on your behalf at any time', 'Access your basic information', 'Provide access to your data via the Web'
+   - Choose permissions: 'Perform requests on your behalf at any time', ''Access your basic information'', 'Provide access to your data via the Web'
     'Access and manage your data' 
    - Use digital signatures To upload your server.crt file.
    - Edit policy and select "Admin approved users are pre-authorized" to avoid "Not approved for access in salesforce" issue. 
@@ -42,7 +42,10 @@
 1.  Set Environment variable:
     #HUB_ORG_DH:- The username for the Dev Hub org
     #SFDC_HOST_DH:- The login URL of the Salesforce instance that is hosting the Dev Hub org. The default is https://login.salesforce.com
-    CONNECTED_APP_CONSUMER_KEY_DH :- The consumer key that was returned after you created a connected app in your Dev Hub org.
+    CONNECTED_APP_CONSUMER_KEY_PROD :- The consumer key that was returned after you created a connected app in your Prod org.
+    CONNECTED_APP_CONSUMER_KEY_UAT :- The consumer key that was returned after you created a connected app in your UAT org.
+    CONNECTED_APP_CONSUMER_KEY_DEV :- The consumer key that was returned after you created a connected app in your Dev org.
+
     JWT_CRED_ID_DH:- The credentials ID for the private key file from Jenkins (server.key)
 2. Update Configs:
     - Set branches, org usernames and instances in config.properties file
