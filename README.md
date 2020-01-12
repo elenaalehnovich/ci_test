@@ -1,4 +1,4 @@
-#Steps for setup
+#Initial setup
 
 1. Install Salesforce CLI. https://developer.salesforce.com/tools/sfdxcli
 2. Create a Self-Signed SSL Certificate and Private Key
@@ -21,31 +21,34 @@
     'Access and manage your data' 
    - Use digital signatures To upload your server.crt file.
    - Edit policy and select "Admin approved users are pre-authorized" to avoid "Not approved for access in salesforce" issue. 
-   - Assign Connected App to user or System Admin prof ile.
-4. Setup Jenkins
-   - Install Jenkins. https://jenkins.io/download/
-   - Login to Jenkins (by default for local runner server: localhost:8080)
-   - Install Git + GitHub(BitBucket/GitLab whatever you use as source repo) + Custom Tool + Pipeline Utility Steps 
-        + Warnings Next Generation + Slack Notification plugins in Jenkins
-   - Configure the the Server.key from step 2 in the Jenkins credentials.
-   (Jenkins -> Credentials -> Add new -> Upload server.key as Secret File)
-   - Configure Slack integration follow the instructions using: https://my.slack.com/services/new/jenkins-ci
-6. Configure GitHub webhooks
+   - Assign Connected App to user or System Admin profile.
+   
+#GitHub setup
+1. Configure GitHub webhooks
     - Go to {Repository} > Settings > Hooks and services > Add webhook
     - Payload URL: http://{JENKINS_UR}/github-webhook/ 
     (for test where Jenkins is running on local server following instructions from Step 5 could be used: https://webhookrelay.com/blog/2017/11/23/github-jenkins-guide)
     - Content type: Application/json
     - Check 'Send me everything'.
-    
+
+#Jenkins setup
+1. Setup Jenkins
+   - Install Jenkins. https://jenkins.io/download/
+   - Login to Jenkins (by default for local runner server: localhost:8080)
+2. Install required plugins
+   - Go to Jenkins -> Setup -> Plugin setup 
+   -> Install Git + GitHub(BitBucket/GitLab whatever you use as source repo) + Custom Tool + Pipeline Utility Steps 
+        + Warnings Next Generation + Slack Notification plugins in Jenkins
+3. Configure the the Server.key from initial setup step 2 in the Jenkins credentials.
+   - Go to Jenkins -> Credentials -> Add new -> Upload server.key as Secret File
+4. Configure Slack integration follow the instructions using: https://my.slack.com/services/new/jenkins-ci
+  
 # Jenkins Job configuration
 
 1.  Set Environment variable:
-    #HUB_ORG_DH:- The username for the Dev Hub org
-    #SFDC_HOST_DH:- The login URL of the Salesforce instance that is hosting the Dev Hub org. The default is https://login.salesforce.com
     CONNECTED_APP_CONSUMER_KEY_PROD :- The consumer key that was returned after you created a connected app in your Prod org.
     CONNECTED_APP_CONSUMER_KEY_UAT :- The consumer key that was returned after you created a connected app in your UAT org.
     CONNECTED_APP_CONSUMER_KEY_DEV :- The consumer key that was returned after you created a connected app in your Dev org.
-
     JWT_CRED_ID_DH:- The credentials ID for the private key file from Jenkins (server.key)
 2. Update Configs:
     - Set branches, org usernames and instances in config.properties file
@@ -55,6 +58,6 @@
     - Go to Jenkins -> Create new Item -> Multibranch PIpeline
     - Add new GitHub source in Branching Sources
     - Specify Repository HTTPS URL as your GitHUb repository and your credentials
-    - In behaviours click 'Add' choose 'Filter by name (with regular expression)' where push branches which you want to handle: master|develop|uat
+    - In behaviours click 'Add' choose 'Filter by name (with regular expression)' where push branches which you want to handle: (master|develop|uat)
     - Save your job
 

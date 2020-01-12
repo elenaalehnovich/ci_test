@@ -13,22 +13,14 @@ properties([
         ),
         disableConcurrentBuilds(),
         pipelineTriggers([cron('H */12 * * *')]),
-        pipelineTriggers([githubPush()]),
-        /*pipelineTriggers([githubBranches(
-                restriction (
-                        matchAsPattern: true,
-                        matchCriteriaStr: 'uat|develop'))])*/
-
-        /*pipelineTriggers([
-                [$class: 'CodingPushTrigger', branchFilterType: 'RegexBasedFilter', targetBranchRegex: '(uat|develop)']
-        ])*/
+        pipelineTriggers([githubPush()])
 ])
 
 node {
     def props = readProperties file: 'config.properties'
 
     def JWT_KEY_CRED_ID = '0205c40f-b192-4137-b05f-28c48820e46d'
-    def RUN_ARTIFACT_DIR = props.tests_dir == null ? 'tests' : props.tests_dir
+    def RUN_ARTIFACT_DIR = 'tests'
 
     def toolbelt = tool 'toolbelt'
     def timer_run = currentBuild.getBuildCauses()[0].toString().contains('TimerTrigger')
@@ -43,9 +35,6 @@ node {
     try {
         withCredentials([file(credentialsId: JWT_KEY_CRED_ID, variable: 'jwt_key_file')]) {
             stage('Set Org Properties') {
-                println env.BRANCH_NAME
-                println props.branch_prod
-                println env.BRANCH_NAME == props.branch_prod
                 if (env.BRANCH_NAME == props.branch_dev) {
                     sf_username = props.dev_username
                     sf_host = props.dev_host
@@ -75,9 +64,6 @@ node {
                     } else {
                         rc = bat returnStatus: true, script: auth_script;
                     }
-                    if (rc != 0) {
-                        error 'Authorization failed'
-                    }
                 }
             }
 
@@ -91,16 +77,13 @@ node {
                     } else {
                         rc = bat returnStatus: true, script: test_script
                     }
-                    if (rc != 0) {
-                        error 'Apex test run failed'
-                    }
                 }
             }
 
             stage('Deploy Code') {
                 if (!timer_run && sf_username != null) {
                    // def mdapi_convert_script = "\"${toolbelt}\" force:source:convert -r ./force-app/ -d manifest";
-                    def deploy_script = "\"${toolbelt}\" force:source:deploy -d force-app. -u ${sf_username}";
+                    def deploy_script = "\"${toolbelt}\" force:source:deploy -p force-app -u ${sf_username}";
                     if (isUnix()) {
                         sh returnStatus: true, script: mdapi_convert_script
                         rc = sh returnStdout: true, script: deploy_script
@@ -108,19 +91,18 @@ node {
                         bat returnStatus: true, script: mdapi_convert_script
                         rc = bat returnStdout: true, script: deploy_script;
                     }
-                    if (rc != 0) {
-                        error 'Deploy Code Failed'
-                    }
+                }
+            }
+
+            stage("Send Slack") {
+                if (props.slack_channel != null) {
+                    slackSend(channel: props.slack_channel, color: 'good', message: "Build finished successfully : ${env.JOB_NAME} [${env.BUILD_NUMBER}] (<${env.RUN_DISPLAY_URL}|Open>) :thumbsup:")
                 }
             }
         }
     } catch (e) {
         if (props.slack_channel != null) {
             slackSend(channel: props.slack_channel, color: 'danger', message: "Huh, not good... Build failed : ${env.JOB_NAME} [${env.BUILD_NUMBER}] ${e} (<${env.RUN_DISPLAY_URL}|Open>) :man-shrugging::shrug:")
-        }
-    } finally {
-        if (props.slack_channel != null) {
-            slackSend(channel: props.slack_channel, color: 'good', message: "Build finished successfully : ${env.JOB_NAME} [${env.BUILD_NUMBER}] (<${env.RUN_DISPLAY_URL}|Open>) :thumbsup:")
         }
     }
 }
